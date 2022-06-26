@@ -37,7 +37,6 @@ namespace Infectionbomb
         }
         public override List<(string, string)> GetPreloadNames()
         {
-            Log("yo");
             return new List<(string, string)>
             {
                 ("Dream_Final_Boss", "Boss Control/Radiance")
