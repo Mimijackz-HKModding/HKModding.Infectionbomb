@@ -1,0 +1,73 @@
+Abyss Crawler
+Acid Flyer
+Acid Walker
+Angry Buzzer
+Baby Centipede Spawner
+Bee Hatchling Ambient
+Bee Stinger
+Big Bee
+Blobble
+Blocker
+Blow Fly
+Bursting Bouncer
+Bursting Zombie
+Ceiling Dropper
+Centipede Hatcher
+Colosseum Grass Hopper
+Colosseum Armoured Roller
+Crystal Crawler
+Crystallised Lazer Bug
+Electric Mage
+Fat Fly
+Fungoon Baby
+Fungus Flyer
+Garden Zombie
+Giant Hopper
+Gorgeous Husk
+Grass Hopper
+Grave Zombie
+Great Shield Zombie
+Grub Mimic
+Hatcher
+Hatcher Baby Spawner
+Hiveling Spawner
+Hopper
+Lesser Mawlek
+Mage
+Mage Balloon
+Mage Balloon Spawner
+Mage Blob
+Mantis Heavy
+Mantis Heavy Flyer
+Mawlek Turret
+Mawlek Turret Ceiling
+Mines Crawler
+Moss Charger
+Moss Flyer
+Moss Knight Fat
+Moss Walker
+Mossman Shaker
+Parasite Balloon
+Roller
+Royal Zombie
+Royal Zombie Coward
+Royal Zombie Fat
+Ruins Flying Sentry
+Ruins Flying Sentry Javelin
+Ruins Sentry
+Ruins Sentry Fat
+Slash Spider
+Spider Flyer
+Spider Mini
+Spitter
+Spitting Zombie
+Super Spitter
+Zombie Barger
+Zombie Beam Miner
+Zombie Fungus
+Zombie Hive
+Zombie Hornhead
+Zombie Leaper
+Zombie Miner
+Zombie Runner
+Zombie Shield

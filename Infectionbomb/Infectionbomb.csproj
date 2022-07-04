@@ -24,8 +24,12 @@
         <RemoveDir Directories="$(ExportDir)/" />
         <MakeDir Directories="$(ExportDir)/" />
         <MakeDir Directories="$(ExportDir)/zip/" />
+        <MakeDir Directories="$(ExportDir)/zip/Enemies" />
         <MakeDir Condition="!Exists('$(HollowKnightRefs)/Mods/$(TargetName)/')" Directories="$(HollowKnightRefs)/Mods/$(TargetName)/" />
+        <MakeDir Condition="!Exists('$(HollowKnightRefs)/Mods/$(TargetName)/Enemies')" Directories="$(HollowKnightRefs)/Mods/$(TargetName)/Enemies" />
         <Copy SourceFiles="$(TargetPath);$(TargetDir)/$(TargetName).pdb" DestinationFolder="$(HollowKnightRefs)/Mods/$(TargetName)/" />
+        <Copy SourceFiles="$(SolutionDir)/Infectionbomb/Enemies/All enemies (no bosses).txt;$(SolutionDir)/Infectionbomb/Enemies/All enemies.txt;$(SolutionDir)/Infectionbomb/Enemies/Infected.txt" DestinationFolder="$(HollowKnightRefs)/Mods/$(TargetName)/Enemies" />
+        <Copy SourceFiles="$(SolutionDir)/Infectionbomb/Enemies/All enemies (no bosses).txt;$(SolutionDir)/Infectionbomb/Enemies/All enemies.txt;$(SolutionDir)/Infectionbomb/Enemies/Infected.txt" DestinationFolder="$(ExportDir)/zip/Enemies" />
         <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ExportDir)/" />
         <Copy SourceFiles="$(SolutionDir)/README.md;$(TargetPath);$(TargetDir)/$(TargetName).pdb" DestinationFolder="$(ExportDir)/zip/" />
         <ZipDirectory SourceDirectory="$(ExportDir)/zip/" DestinationFile="$(ExportDir)/$(TargetName).zip" />
@@ -45,11 +49,11 @@
         <WriteLinesToFile File="$(ExportDir)/VERSION.txt" Lines="@(VersionNumber)" Overwrite="true" Encoding="UTF-8" />
     </Target>
 
-    <ItemGroup>
+	<ItemGroup>
       <None Remove="build.yml" />
       <None Remove="README.md" />
     </ItemGroup>
-
+  
     <ItemGroup>
         <Reference Include="Assembly-CSharp">
             <HintPath>$(HollowKnightRefs)/Assembly-CSharp.dll</HintPath>
@@ -326,5 +330,17 @@
     <ItemGroup>
         <None Include=".gitignore" />
         <None Include="LocalOverrides.targets" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="Enemies\All enemies %28no bosses%29.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Enemies\All enemies.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Enemies\Infected.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 </Project>
