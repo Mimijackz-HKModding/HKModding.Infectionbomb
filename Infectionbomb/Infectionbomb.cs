@@ -3,16 +3,19 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Infectionbomb
 {
-    public class Infectionbomb : Mod
+    public class Infectionbomb : Mod, IMenuMod, ITogglableMod
     {
         private static Infectionbomb? _instance;
 
         private GameObject radiance;
         public static readonly string EnemiesPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "/Enemies";
         public string[] currentEnemies;
+        public int loadedEnemyList = 0;
+        string enemySuffixRegex = @"( ?(\d+)| ?\(?[Cc]lone\)?| ?[Oo]rdeal ?| ?[Bb]ottom| ?[A-Z](?![a-zA-Z])| [Ff]ixed| ?NP(?![a-zA-Z])| ?[Gg]ate ?(?=[Mm]antis)| ?Sp$| ?[Nn]ew ?| ?[Cc]ol ?(\([Cc]lone\))*$)";
 
         internal static Infectionbomb Instance
         {
@@ -26,6 +29,8 @@ namespace Infectionbomb
             }
         }
 
+        public bool ToggleButtonInsideMenu => true;
+
         private int rageHP = 2600;
         private int stunHP = 2000;
 
@@ -34,6 +39,26 @@ namespace Infectionbomb
         public Infectionbomb() : base()
         {
             _instance = this;
+        }
+        public List<IMenuMod.MenuEntry> GetMenuData(IMenuMod.MenuEntry? toggleButtonEntry)
+        {
+            List<IMenuMod.MenuEntry> menuData = new List<IMenuMod.MenuEntry>();
+            if (toggleButtonEntry.HasValue) menuData.Add(toggleButtonEntry.Value);
+            menuData.Add(new IMenuMod.MenuEntry
+            {
+                Name = "Enemy list",
+                Description = "Decides what enemies to activate bomb, can be changed in mod folder",
+                Values = getEnemyNames(false).ToArray(),
+                // opt will be the index of the option that has been chosen
+                Saver = opt =>
+                {
+                    this.loadedEnemyList = opt;
+                    this.currentEnemies = File.ReadAllLines(getEnemyNames(true)[opt]);
+                },
+                Loader = () => this.loadedEnemyList
+            });
+
+            return menuData;
         }
         public override List<(string, string)> GetPreloadNames()
         {
@@ -46,13 +71,16 @@ namespace Infectionbomb
         public override void Initialize(Dictionary<string, Dictionary<string, GameObject>> preloadedObjects)
         {
             Log("Initializing");
-            Log("Getting radiance object");
-            radiance = preloadedObjects["Dream_Final_Boss"]["Boss Control/Radiance"];
+            if (radiance == null)
+            {
+                Log("Getting radiance object");
+                radiance = preloadedObjects["Dream_Final_Boss"]["Boss Control/Radiance"];
+            }
             Log("Spawning hooks");
             ModHooks.OnReceiveDeathEventHook += OnEnemyDeath;
             ModHooks.ObjectPoolSpawnHook += ObjectSpawn;
             Log("Reading enemy text file");
-            currentEnemies = File.ReadAllText(getEnemyNames(true)[0]).Split('\n');
+            currentEnemies = File.ReadAllLines(getEnemyNames(true)[loadedEnemyList]);
             /*foreach (string enemytxt in currentEnemies)
             {
                 Log(enemytxt);
@@ -72,7 +100,8 @@ namespace Infectionbomb
 
         private void OnEnemyDeath(EnemyDeathEffects enemyDeathEffects, bool eventAlreadyReceived, ref float? attackDirection, ref bool resetDeathEvent, ref bool spellBurn, ref bool isWatery)
         {
-            if (!Array.Exists(currentEnemies, item => enemyDeathEffects.name.Contains(item))) return;
+            string origName = Regex.Replace(enemyDeathEffects.name.Replace("_", " "), enemySuffixRegex, "");
+            if (!Array.Exists(currentEnemies, item => (origName == item || item == "*"))) return;
             if (eventAlreadyReceived) return;
             GameObject radPrefab = GameObject.Instantiate(radiance, enemyDeathEffects.corpseSpawnPoint, Quaternion.identity);
             radPrefab.SetActive(true);
@@ -92,6 +121,11 @@ namespace Infectionbomb
             radPrefab.LocateMyFSM("Attack Commands").FsmVariables.FindFsmFloat("Orb Max Y").Value = radPrefab.transform.position.y + 4;
 
         }
+
+        public void loadNewEnemies(int index)
+        {
+
+        }
         private List<string> getEnemyNames(bool fullName)
         {
             DirectoryInfo info = new DirectoryInfo(EnemiesPath);
@@ -100,12 +134,11 @@ namespace Infectionbomb
             List<string> names = new List<string>();
             foreach (FileInfo fileInfo in files)
             {
-                string[] file = fileInfo.Name.Split('.');
-                if (file[file.Length - 1] == "txt")
+                if (fileInfo.Extension == ".txt")
                 {
-                    if (!fullName) names.Add(file[file.Length - 2]);
+                    if (!fullName) names.Add(fileInfo.Name.Replace(".txt", ""));
                     else names.Add(fileInfo.FullName);
-                    Log("Found txt file " + file[file.Length - 2]);
+                    Log("Found txt file " + fileInfo.Name);
                 }
             }
             return names;
@@ -118,6 +151,14 @@ namespace Infectionbomb
             HutongGames.PlayMaker.Actions.RandomFloat? yvalue = action.Actions[4] as HutongGames.PlayMaker.Actions.RandomFloat;
             yvalue.min = pos.y;
             yvalue.max = pos.y + 2.17f;
+        }
+
+        public void Unload()
+        {
+            Log("Unloading");
+            ModHooks.OnReceiveDeathEventHook -= OnEnemyDeath;
+            ModHooks.ObjectPoolSpawnHook -= ObjectSpawn;
+            Log("Unloaded");
         }
     }
 }

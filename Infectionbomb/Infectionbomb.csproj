@@ -3,7 +3,7 @@
     <PropertyGroup>
         <RootNamespace>Infectionbomb</RootNamespace>
         <AssemblyName>Infectionbomb</AssemblyName>
-        <TargetFramework>net472</TargetFramework>
+        <TargetFramework>net48</TargetFramework>
         <AssemblyTitle>Infectionbomb</AssemblyTitle>
         <Product>Infectionbomb</Product>
         <Description>A Hollow Knight mod that spawns radiance whenever you kill an infected bug</Description>
